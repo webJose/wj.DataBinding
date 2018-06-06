@@ -29,11 +29,7 @@ namespace wj.DataBinding
         /// method that called this function.</param>
         protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChangedEventHandler ev = PropertyChanged;
-            if (ev != null)
-            {
-                ev(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>

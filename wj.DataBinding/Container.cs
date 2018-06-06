@@ -26,7 +26,7 @@ namespace wj.DataBinding
         /// In case that ever changes (unlikely, granted) all that it takes is to change the value 
         /// here.
         /// </summary>
-        private static bool NoCustomTypeDescription = true;
+        private const bool NoCustomTypeDescription = true;
         #endregion
 
         #region Properties
@@ -63,14 +63,11 @@ namespace wj.DataBinding
         /// Creates a new instance of the class.
         /// </summary>
         /// <param name="dataObject">The data object to contain.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "Caused by the raising of the PropertyChanged event in NotifyPropertyChanged for the DataObject property.")]
         public Container(TData dataObject)
             : base()
         {
             DataObject = dataObject;
-            if (DataObject != null)
-            {
-                DataObject.PropertyChanged += DataObjectPropertyChangedHandler;
-            }
         }
         #endregion
 
@@ -83,6 +80,11 @@ namespace wj.DataBinding
         private void DataObjectPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(e.PropertyName);
+        }
+
+        protected ICustomTypeDescriptor AsICustomTypeDescriptor()
+        {
+            return (ICustomTypeDescriptor)this;
         }
         #endregion
 

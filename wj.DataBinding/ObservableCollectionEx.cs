@@ -23,8 +23,18 @@ namespace wj.DataBinding
         protected int FreezeCount { get; set; } = 0;
 
         /// <summary>
+        /// Gets a Boolean value that indicates if the collection changed while event raising was 
+        /// frozen last, but only if the collection is not set up for automatic event raising.  If 
+        /// it is set up for automatic event raising on unfreezing, a <code>CollectionChanged</code> 
+        /// event is fired and this property's value is reset to false.  The value also resets to 
+        /// false whenever the event raising becomes frozen once more.
+        /// </summary>
+        public bool CollectionChangedWhileFrozen { get; private set; } = false;
+
+        /// <summary>
         /// Gets or sets a Boolean value that determines if a <code>CollectionChanged</code> event 
-        /// is automatically fired when the collection change events are unfrozen.
+        /// is automatically fired when the collection change events are unfrozen and the 
+        /// collection reported change while its event raising was frozen.
         /// </summary>
         public bool AutoFireEventOnUnfreeze { get; set; }
         #endregion
@@ -85,6 +95,7 @@ namespace wj.DataBinding
         public virtual void FreezeCollectionNotifications()
         {
             ++FreezeCount;
+            CollectionChangedWhileFrozen = false;
         }
 
         /// <summary>
@@ -102,9 +113,10 @@ namespace wj.DataBinding
                 throw new InvalidOperationException("Cannot unfreeze collection notifications because they are not frozen.");
             }
             --FreezeCount;
-            if (FreezeCount == 0 && AutoFireEventOnUnfreeze)
+            if (FreezeCount == 0 && AutoFireEventOnUnfreeze && CollectionChangedWhileFrozen)
             {
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                CollectionChangedWhileFrozen = false;
             }
         }
 
@@ -112,7 +124,8 @@ namespace wj.DataBinding
         {
             if (FreezeCount > 0)
             {
-                //Event notfication is frozen.  Do not raise the event.
+                //Event notfication is frozen.  Do not raise the event, but mark the change.
+                CollectionChangedWhileFrozen = true;
                 return;
             }
             base.OnCollectionChanged(e);
