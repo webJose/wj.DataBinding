@@ -42,6 +42,7 @@
     <Compile Include="ContainedDataPropertyDescriptor.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
+    <Compile Include="ObservableCollectionEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
