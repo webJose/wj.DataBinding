@@ -17,10 +17,21 @@ namespace wj.DataBinding
         where TData : INotifyPropertyChanged
     {
         #region Properties
+
         /// <summary>
         /// Gets or sets the original property descriptor object.
         /// </summary>
         private PropertyDescriptor OriginalPD { get; set; }
+
+        public override bool IsReadOnly
+        {
+            get { return OriginalPD.IsReadOnly; }
+        }
+
+        public override Type PropertyType
+        {
+            get { return OriginalPD.PropertyType; }
+        }
         #endregion
 
         #region Constructors
@@ -36,20 +47,31 @@ namespace wj.DataBinding
         #endregion
 
         #region Methods
+
         /// <summary>
         /// Casts the given object as a container object.
         /// </summary>
         /// <param name="component">The object to cast.</param>
         /// <returns>The same object cast to the needed type.</returns>
-        private Container<TData> AsSelectedEntity(object component)
+        private Container<TData> AsContainerEntity(object component)
         {
             return component as Container<TData>;
         }
 
+        /// <summary>
+        /// Assumes the given object is a container object in order to cast it and then return 
+        /// its contained data object.
+        /// </summary>
+        /// <param name="component">The object to cast and extract the object from.</param>
+        /// <returns>The contained data object.</returns>
+        private TData ContainedObject(object component)
+        {
+            return AsContainerEntity(component).DataObject;
+        }
+
         public override bool CanResetValue(object component)
         {
-            Container<TData> selEntity = AsSelectedEntity(component);
-            return OriginalPD.CanResetValue(selEntity.DataObject);
+            return OriginalPD.CanResetValue(ContainedObject(component));
         }
 
         public override Type ComponentType
@@ -62,36 +84,22 @@ namespace wj.DataBinding
 
         public override object GetValue(object component)
         {
-            Container<TData> selEntity = AsSelectedEntity(component);
-            return OriginalPD.GetValue(selEntity.DataObject);
-        }
-
-        public override bool IsReadOnly
-        {
-            get { return OriginalPD.IsReadOnly; }
-        }
-
-        public override Type PropertyType
-        {
-            get { return OriginalPD.PropertyType; }
+            return OriginalPD.GetValue(ContainedObject(component));
         }
 
         public override void ResetValue(object component)
         {
-            Container<TData> selEntity = AsSelectedEntity(component);
-            OriginalPD.ResetValue(selEntity.DataObject);
+            OriginalPD.ResetValue(ContainedObject(component));
         }
 
         public override void SetValue(object component, object value)
         {
-            Container<TData> selEntity = AsSelectedEntity(component);
-            OriginalPD.SetValue(selEntity.DataObject, value);
+            OriginalPD.SetValue(ContainedObject(component), value);
         }
 
         public override bool ShouldSerializeValue(object component)
         {
-            Container<TData> selEntity = AsSelectedEntity(component);
-            return OriginalPD.ShouldSerializeValue(selEntity.DataObject);
+            return OriginalPD.ShouldSerializeValue(ContainedObject(component));
         }
         #endregion
     }

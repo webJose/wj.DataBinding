@@ -36,9 +36,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContainerTests.cs" />
     <Compile Include="NotifyPropertyChangedTests.cs" />
     <Compile Include="ObservableCollectionExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyDescriptorEqComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

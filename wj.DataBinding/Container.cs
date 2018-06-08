@@ -18,6 +18,7 @@ namespace wj.DataBinding
         where TData : INotifyPropertyChanged
     {
         #region Static Section
+
         /// <summary>
         /// Boolean value used in the implementation of <code>System.ComponentModel.ICustomTypeDescriptor</code> 
         /// in case implementation ever changes.  Currently the documentation of the base class 
@@ -59,6 +60,7 @@ namespace wj.DataBinding
         #endregion
 
         #region Constructors
+
         /// <summary>
         /// Creates a new instance of the class.
         /// </summary>
@@ -72,6 +74,7 @@ namespace wj.DataBinding
         #endregion
 
         #region Methods
+
         /// <summary>
         /// Forwards property change notifications of the contained data object.
         /// </summary>
@@ -80,11 +83,6 @@ namespace wj.DataBinding
         private void DataObjectPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
             RaisePropertyChanged(e.PropertyName);
-        }
-
-        protected ICustomTypeDescriptor AsICustomTypeDescriptor()
-        {
-            return (ICustomTypeDescriptor)this;
         }
         #endregion
 
