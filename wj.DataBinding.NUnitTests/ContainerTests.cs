@@ -9,20 +9,44 @@ using System.Threading.Tasks;
 
 namespace wj.DataBinding.NUnitTests
 {
+    /// <summary>
+    /// Test class that defines the tests for the <code>wj.DataBinding.Container</code> class.
+    /// </summary>
     [TestFixture]
     public class ContainerTests
     {
+        #region Helper Classes
+
+        /// <summary>
+        /// Test class used to provide an object to contain in a class that derives from the 
+        /// <code>wj.DataBinding.Container</code> class.
+        /// </summary>
         public class TestClass : NotifyPropertyChanged
         {
             #region Properties
+
+            /// <summary>
+            /// Backing field for the <code>Id</code> property.
+            /// </summary>
             private long m_id;
+
+            /// <summary>
+            /// Gets or sets a <code>long</code> test value.
+            /// </summary>
             public long Id
             {
                 get { return m_id; }
                 set { SaveAndNotify(ref m_id, value); }
             }
 
+            /// <summary>
+            /// Backing field for the <code>Name</code> property.
+            /// </summary>
             private string m_name;
+
+            /// <summary>
+            /// Gets or sets a <code>string</code> test value.
+            /// </summary>
             public string Name
             {
                 get { return m_name; }
@@ -31,10 +55,22 @@ namespace wj.DataBinding.NUnitTests
             #endregion
         }
 
+        /// <summary>
+        /// Test class that inherits from <code>wj.DataBinding.Container</code> and adds a property 
+        /// to the contained object.
+        /// </summary>
         private class DerivedContainer : Container<TestClass>
         {
             #region Properties
+
+            /// <summary>
+            /// Backing field for the <code>DerProperty</code> property.
+            /// </summary>
             private bool m_derProperty;
+
+            /// <summary>
+            /// Gets or sets a <code>bool</code> test value.
+            /// </summary>
             public bool DerProperty
             {
                 get { return m_derProperty; }
@@ -43,14 +79,26 @@ namespace wj.DataBinding.NUnitTests
             #endregion
 
             #region Constructors
+
+            /// <summary>
+            /// Creates a new instance of the test class using the provided data object as the 
+            /// object provider of properties.
+            /// </summary>
+            /// <param name="data">The contained object meant to provide properties for data 
+            /// binding.</param>
             public DerivedContainer(TestClass data)
                 : base(data)
             { }
             #endregion
         }
+        #endregion
 
         #region Test Data
-        private static IEnumerable PropertyNameAndPdTypes
+
+        /// <summary>
+        /// Gets the test data used to check correct property owner.
+        /// </summary>
+        private static IEnumerable PropertyOwnerTestData
         {
             get
             {
@@ -151,8 +199,14 @@ namespace wj.DataBinding.NUnitTests
         }
         #endregion
 
+        /// <summary>
+        /// Tests that the correct property owner is returned every time.
+        /// </summary>
+        /// <param name="containedData">The object provider of property descriptors.</param>
+        /// <param name="propertyName">The property name to test ownership on.</param>
+        /// <returns>The object owner of the property.</returns>
         [Test]
-        [TestCaseSource(nameof(PropertyNameAndPdTypes))]
+        [TestCaseSource(nameof(PropertyOwnerTestData))]
         public object CorrectPropertyOwner(Container<TestClass> containedData, string propertyName)
         {
             //Act.

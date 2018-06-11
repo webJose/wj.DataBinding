@@ -9,28 +9,67 @@ using System.Threading.Tasks;
 
 namespace wj.DataBinding.NUnitTests
 {
+    /// <summary>
+    /// Test class that defines the tests for the <code>wj.DataBinding.ObservableCollectionEx</code> 
+    /// class.
+    /// </summary>
     [TestFixture]
     public class ObservableCollectionExTests
     {
+        #region Helper Classes
+
+        /// <summary>
+        /// Helper class used to count the number of times the <code>CollectionChanged</code> 
+        /// event is raised.
+        /// </summary>
         private class CollectionChangedHandler
         {
             #region Properties
+
+            /// <summary>
+            /// Gets the number of times the <code>CollectionChanged</code> event was raised 
+            /// during the course of testing.
+            /// </summary>
             public int EventCount { get; private set; } = 0;
             #endregion
 
+            #region Constructors
+
+            /// <summary>
+            /// Creates a new intance of this test class and binds to the <code>CollectionChanged</code> 
+            /// event of the provided collection.
+            /// </summary>
+            /// <param name="collection">Collection object to monitor.</param>
             public CollectionChangedHandler(INotifyCollectionChanged collection)
             {
                 collection.CollectionChanged += CollectionChangedFn;
             }
+            #endregion
 
+            #region Event Handlers
+
+            /// <summary>
+            /// Increases the <code>EventCount</code> property value.
+            /// </summary>
+            /// <param name="sender">Originator of the event.</param>
+            /// <param name="e">Event data.</param>
             private void CollectionChangedFn(object sender, NotifyCollectionChangedEventArgs e)
             {
-                Debug.Print($"Collection changed:  {e.Action}");
                 ++EventCount;
             }
+            #endregion
         }
+        #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Creates a new <code>CollectionChangedHandler</code> object using the provided 
+        /// collection as source of events.
+        /// </summary>
+        /// <param name="collection">Collection to monitor.</param>
+        /// <returns>A new <code>CollectionChangedHandler</code> object arranged to monitor the 
+        /// <code>CollectionChanged</code> event of the provided collection.</returns>
         private CollectionChangedHandler SetupNotifyCollectionChangedHandler(INotifyCollectionChanged collection)
         {
             return new CollectionChangedHandler(collection);
@@ -40,7 +79,8 @@ namespace wj.DataBinding.NUnitTests
         #region Tests
 
         /// <summary>
-        /// Tests basic functionality:  CollectionChanged must not be raised on collection change.
+        /// Tests basic functionality:  CollectionChanged must not be raised while notification is 
+        /// frozen.
         /// </summary>
         [Test]
         public void Freeze()
@@ -70,14 +110,14 @@ namespace wj.DataBinding.NUnitTests
             //Act.
             collection.FreezeCollectionNotifications();
             collection.Add(new object());
-            collection.UnfreezCollectionNotifications();
+            collection.UnfreezeCollectionNotifications();
 
             //Assert.
             Assert.That(handler.EventCount == 1, $"CollectionChanged event was raised {handler.EventCount} time(s) when the count was expected to be 1.");
         }
 
         /// <summary>
-        /// Tests that unfreezing the events too much throws an exception.
+        /// Tests that unfreezing the notification of change too much throws an exception.
         /// </summary>
         [Test]
         public void UnfreezingImbalanceThrows()
@@ -100,10 +140,10 @@ namespace wj.DataBinding.NUnitTests
                 for (int i = 0; i <= freezeCount; ++i)
                 {
                     ++unfreezeCount;
-                    collection.UnfreezCollectionNotifications();
+                    collection.UnfreezeCollectionNotifications();
                 }
             });
-            Assert.That(unfreezeCount - freezeCount == 1, $"Unfreezing did throw as expected, but did not do it at the expected iteration ({unfreezeCount}.");
+            Assert.That(unfreezeCount - freezeCount == 1, $"Unfreezing did throw as expected, but did not do it at the expected iteration ({unfreezeCount}).");
         }
 
         /// <summary>
@@ -137,7 +177,7 @@ namespace wj.DataBinding.NUnitTests
             //Act.
             collection.FreezeCollectionNotifications();
             collection.Add(new object());
-            collection.UnfreezCollectionNotifications();
+            collection.UnfreezeCollectionNotifications();
 
             //Assert.
             Assert.That(!collection.CollectionChangedWhileFrozen, $"The collection did not reset the {nameof(ObservableCollectionEx<object>.CollectionChangedWhileFrozen)} property to false automatically after unfreezing.");
@@ -155,7 +195,7 @@ namespace wj.DataBinding.NUnitTests
             //Act.
             collection.FreezeCollectionNotifications();
             collection.Add(new object());
-            collection.UnfreezCollectionNotifications();
+            collection.UnfreezeCollectionNotifications();
 
             //Assert.
             Assert.That(collection.CollectionChangedWhileFrozen, $"The property {nameof(ObservableCollectionEx<object>.CollectionChangedWhileFrozen)} did not properly report true after unfreezing.");
@@ -174,7 +214,7 @@ namespace wj.DataBinding.NUnitTests
             //Act.
             collection.FreezeCollectionNotifications();
             collection.Add(new object());
-            collection.UnfreezCollectionNotifications();
+            collection.UnfreezeCollectionNotifications();
             collection.FreezeCollectionNotifications();
 
             //Assert.

@@ -106,7 +106,7 @@ namespace wj.DataBinding
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown whenever this function is called 
         /// more times than the corresponding freezing function.</exception>
-        public virtual void UnfreezCollectionNotifications()
+        public virtual void UnfreezeCollectionNotifications()
         {
             if (FreezeCount <= 0)
             {
